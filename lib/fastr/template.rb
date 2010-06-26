@@ -59,6 +59,10 @@ module Fastr
       HERE
     end
     
+    def redirect(location, text="See Ya!")
+      [301, {'Location' => location}, [text]]
+    end
+    
     def render(kind, tpl, opts={})
       # Read the cache template settings for this application, unless it is passed in
       opts[:cache_template] = self.app.settings.cache_templates unless opts[:cache_template]

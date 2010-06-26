@@ -116,16 +116,19 @@ You should never block EventMachine. If you're doing any kind of I/O in your con
   class DemoController < Fastr::Controller
     def fast_index
       EM.add_timer(1) do
-        async_resp { render(:text, "fast_index\n") }
+        arender(:text, "fast_index\n")
       end
-      render_async
     end
   
     def slow_index
       sleep(1)
       render(:text, "slow_index\n")
     end
+    
+    async :fast_index
   end
+
+Note that you need to mark the actions that are asynchronous with the 'async' line after you define your action methods. You also need to use arender (same options as render), aresp (takes a normal Rack response array as the only argument) or aredirect (takes a URL string as the argument).
 
 Here's the difference:
 
@@ -138,18 +141,6 @@ Here's the difference:
   Concurrency Level:      10
   Time taken for tests:   10.011 seconds
   Requests per second:    1.00 [#/sec] (mean)
-
-If all your actions in a controller are async you can use an after_filter to make things cleaner:
-
-  class DemoController < Fastr::Controller
-    after_filter :render_async
-  
-    def index
-      EM.add_timer(1) do
-        async_resp { render(:text, "fast_index\n") }
-      end
-    end
-  end
 
 == Deferred Responses
 
